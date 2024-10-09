@@ -69,7 +69,7 @@ for video_name in tqdm(video_names):
         inputs = processor(text=prompt, videos=video, return_tensors="pt").to('cuda')
         out = model.generate(**inputs, max_new_tokens=60)
         response = processor.batch_decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-        result[question_asked].append(str(response[0]).replace(",", ""))
+        result[question_asked].append(str(response[0]).replace(",", "").replace("\n", ""))
     video_result.append(video_name)
 header = ["video_name"] + list(result.keys())
 print(header)
