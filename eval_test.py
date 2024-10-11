@@ -33,7 +33,7 @@ model = LlavaNextVideoForConditionalGeneration.from_pretrained(model_name, torch
 processor = LlavaNextVideoProcessor.from_pretrained(model_name)
 
 video_path = "../kinetics-dataset/k400/train/"
-video_names = [f for f in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, f))][:2]
+video_names = [f for f in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, f))][:2000]
 
 questions = ["What is in this video?", "What is the person doing?", "What are the people doing in the background?", "Are people in the video focused or distracted?", "Can you tell the mood of the person in the video?", "Can you identify objects in the video?", "Is anyone holding any object, what are they holding?", "Are there any safety hazards in the place?", "Can you tell the profession of people in the video?"]
 result = {}

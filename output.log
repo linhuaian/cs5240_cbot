@@ -11,5 +11,7 @@ no change     /home/h/huaian3/miniconda3/lib/python3.12/site-packages/xontrib/co
 no change     /home/h/huaian3/miniconda3/etc/profile.d/conda.csh
 no change     /home/h/huaian3/.bashrc
 No action taken.
-['video_name', 'What is in this video?', 'What is the person doing?', 'What are the people doing in the background?', 'Are people in the video focused or distracted?', 'Can you tell the mood of the person in the video?', 'Can you identify objects in the video?', 'Is anyone holding any object, what are they holding?', 'Are there any safety hazards in the place?', 'Can you tell the profession of people in the video?']
-['video_name', 'What is in this video?', 'What is the person doing?', 'What are the people doing in the background?', 'Are people in the video focused or distracted?', 'Can you tell the mood of the person in the video?', 'Can you identify objects in the video?', 'Is anyone holding any object, what are they holding?', 'Are there any safety hazards in the place?', 'Can you tell the profession of people in the video?']
+FlashAttention2 is not installed.
+Warning: Flash attention is not available, using eager attention instead.
+FlashAttention2 is not installed.
+Warning: Flash attention is not available, using eager attention instead.
