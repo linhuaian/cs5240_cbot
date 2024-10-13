@@ -56,7 +56,7 @@ video_result = []
 
 for video_name in tqdm(video_names):
     try:
-        video_info = {"type": "video", "video": video_path + video_names[0], "fps": 1.0}
+        video_info = {"type": "video", "video": video_path + video_name, "fps": 1.0}
         video = fetch_video(video_info)
     except Exception as e:
         print(str(e))
