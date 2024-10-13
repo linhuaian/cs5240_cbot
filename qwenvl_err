@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/h/huaian3/eval_test/qwenvl.py", line 12, in <module>
+    model = Qwen2VLForConditionalGeneration.from_pretrained("Qwen/Qwen2-VL-7B-Instruct",
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/h/huaian3/miniconda3/lib/python3.12/site-packages/transformers/modeling_utils.py", line 3880, in from_pretrained
+    config = cls._autoset_attn_implementation(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/h/huaian3/miniconda3/lib/python3.12/site-packages/transformers/modeling_utils.py", line 1572, in _autoset_attn_implementation
+    cls._check_and_enable_flash_attn_2(
+  File "/home/h/huaian3/miniconda3/lib/python3.12/site-packages/transformers/modeling_utils.py", line 1699, in _check_and_enable_flash_attn_2
+    raise ImportError(f"{preface} the package flash_attn seems to be not installed. {install_message}")
+ImportError: FlashAttention2 has been toggled on, but it cannot be used due to the following error: the package flash_attn seems to be not installed. Please refer to the documentation of https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2 to install Flash Attention 2.
+srun: error: xgph4: task 0: Exited with exit code 1

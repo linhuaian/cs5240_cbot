@@ -33,8 +33,8 @@ model = LlavaNextVideoForConditionalGeneration.from_pretrained(model_name, torch
 processor = LlavaNextVideoProcessor.from_pretrained(model_name)
 
 video_path = "../kinetics-dataset/k400/train/"
-video_names = [f for f in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, f))][:2000]
-
+video_names = [f for f in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, f))][:20]
+#video_names = ["Bu9cc4d1bOs_000092_000102.mp4"]
 questions = ["What is in this video?", "What is the person doing?", "What are the people doing in the background?", "Are people in the video focused or distracted?", "Can you tell the mood of the person in the video?", "Can you identify objects in the video?", "Is anyone holding any object, what are they holding?", "Are there any safety hazards in the place?", "Can you tell the profession of people in the video?"]
 result = {}
 for q in questions:
@@ -67,8 +67,9 @@ for video_name in tqdm(video_names):
 
         prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
         inputs = processor(text=prompt, videos=video, return_tensors="pt").to('cuda')
-        out = model.generate(**inputs, max_new_tokens=60)
+        out = model.generate(**inputs, max_new_tokens=100)
         response = processor.batch_decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+        print(response)
         result[question_asked].append(str(response[0]).replace(",", "").replace("\n", ""))
     video_result.append(video_name)
 header = ["video_name"] + list(result.keys())
