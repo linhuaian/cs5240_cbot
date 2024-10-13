@@ -3,7 +3,6 @@ import torch
 from huggingface_hub import login
 from tqdm import tqdm
 import os
-token = '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'
 login(token)
 
 print("Logged IN")

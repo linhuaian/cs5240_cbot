@@ -7,7 +7,7 @@ from typing import Dict
 from transformers import Qwen2VLForConditionalGeneration, AutoTokenizer, AutoProcessor
 import os
 from tqdm import tqdm
-
+import numpy as np
 # Load the model in half-precision on the available device(s)
 model = Qwen2VLForConditionalGeneration.from_pretrained("Qwen/Qwen2-VL-7B-Instruct",
     torch_dtype=torch.bfloat16,
@@ -43,32 +43,48 @@ def fetch_video(ele: Dict, nframe_factor=2):
         return video[idx]
 
 video_path = "../kinetics-dataset/k400/train/"
-video_names = [f for f in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, f))][:2000]
+video_names = [f for f in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, f))][:20]
+#video_path = "yoga.mp4"
 
 
+questions = ["What is in this video?", "What is the person doing?", "What are the people doing in the background?", "Are people in the video focused or distracted?", "Can you tell the mood of the person in the video?", "Can you identify objects in the video?", "Is anyone holding any object, what are they holding?", "Are there any safety hazards in the place?", "Can you tell the profession of people in the video?"]
+result = {}
+for q in questions:
+    result[q] = []
+video_result = []
+# sample uniformly 8 frames from the video
 
-video_info = {"type": "video", "video": video_path + video_names[0], "fps": 1.0}
-video = fetch_video(video_info)
-conversation = [
-    {
+for video_name in tqdm(video_names):
+    try:
+        video_info = {"type": "video", "video": video_path + video_names[0], "fps": 1.0}
+        video = fetch_video(video_info)
+    except Exception as e:
+        print(str(e))
+        continue
+    for question_asked in result.keys():
+        conversation = [{
         "role": "user",
         "content": [
             {"type": "video"},
-            {"type": "text", "text": "What happened in the video?"},
+            {"type": "text", "text": question_asked},
         ],
     }
 ]
-print(conversation)
-# Preprocess the inputs
-text_prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
-# Excepted output: '<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n<|vision_start|><|video_pad|><|vision_end|>What happened in the video?<|im_end|>\n<|im_start|>assistant\n'
+        print(conversation)
+        # Preprocess the inputs
+        text_prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
 
-inputs = processor(text=[text_prompt], videos=[video], padding=True, return_tensors="pt")
-inputs = inputs.to('cuda')
+        inputs = processor(text=[text_prompt], videos=[video], padding=True, return_tensors="pt")
+        inputs = inputs.to('cuda')
 
-# Inference: Generation of the output
-output_ids = model.generate(**inputs, max_new_tokens=128)
-generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(inputs.input_ids, output_ids)]
-output_text = processor.batch_decode(generated_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-print(output_text)
-
+        # Inference: Generation of the output
+        output_ids = model.generate(**inputs, max_new_tokens=128)
+        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(inputs.input_ids, output_ids)]
+        output_text = processor.batch_decode(generated_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+        result[question_asked].append(str(output_text).replace(",", "").replace("\n", ""))
+        print(output_text)
+    video_result.append(video_name)
+    print(f"{video_name} Done")
+header = ["video_name"] + list(result.keys())
+print(header)
+np.savetxt(f"qwenvl_evaluation_output.csv", np.insert(np.column_stack([video_result] + list(result.values())),0,header, axis=0), delimiter = ", ", fmt = "%s")
