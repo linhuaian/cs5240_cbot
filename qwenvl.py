@@ -43,7 +43,7 @@ def fetch_video(ele: Dict, nframe_factor=2):
         return video[idx]
 
 video_path = "../kinetics-dataset/k400/train/"
-video_names = [f for f in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, f))][:20]
+video_names = [f for f in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, f))][4000:6000]
 #video_path = "yoga.mp4"
 
 
@@ -71,20 +71,24 @@ for video_name in tqdm(video_names):
     }
 ]
         print(conversation)
-        # Preprocess the inputs
-        text_prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
+        try:
+            # Preprocess the inputs
+            text_prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
 
-        inputs = processor(text=[text_prompt], videos=[video], padding=True, return_tensors="pt")
-        inputs = inputs.to('cuda')
+            inputs = processor(text=[text_prompt], videos=[video], padding=True, return_tensors="pt")
+            inputs = inputs.to('cuda')
 
-        # Inference: Generation of the output
-        output_ids = model.generate(**inputs, max_new_tokens=128)
-        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(inputs.input_ids, output_ids)]
-        output_text = processor.batch_decode(generated_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-        result[question_asked].append(str(output_text).replace(",", "").replace("\n", ""))
-        print(output_text)
+            # Inference: Generation of the output
+            output_ids = model.generate(**inputs, max_new_tokens=128)
+            generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(inputs.input_ids, output_ids)]
+            output_text = processor.batch_decode(generated_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            result[question_asked].append(str(output_text).replace(",", "").replace("\n", ""))
+            print(output_text)
+        except Exception as e:
+            print(str(e))
+            continue
     video_result.append(video_name)
     print(f"{video_name} Done")
 header = ["video_name"] + list(result.keys())
 print(header)
-np.savetxt(f"qwenvl_evaluation_output.csv", np.insert(np.column_stack([video_result] + list(result.values())),0,header, axis=0), delimiter = ", ", fmt = "%s")
+np.savetxt(f"qwenvl_evaluation_output_2.csv", np.insert(np.column_stack([video_result] + list(result.values())),0,header, axis=0), delimiter = ", ", fmt = "%s")
