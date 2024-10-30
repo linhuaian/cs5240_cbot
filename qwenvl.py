@@ -83,9 +83,10 @@ for video_name in tqdm(video_names):
             generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(inputs.input_ids, output_ids)]
             output_text = processor.batch_decode(generated_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             result[question_asked].append(str(output_text).replace(",", "").replace("\n", ""))
-            print(output_text)
         except Exception as e:
             print(str(e))
+            output_text = "Unable to generate"
+            result[question_asked].append(str(output_text).replace(",", "").replace("\n", ""))
             continue
     video_result.append(video_name)
     print(f"{video_name} Done")
